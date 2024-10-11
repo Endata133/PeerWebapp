@@ -6,7 +6,7 @@ class ForgotPasswordScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Forgot Password"),
-        backgroundColor: Colors.grey[850],
+        backgroundColor: Colors.grey[850], // Consistent dark background for AppBar
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 40.0),
@@ -20,7 +20,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color
                 ),
               ),
               SizedBox(height: 10),
@@ -28,7 +28,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 'Enter your email address, and we’ll send you a link to reset your password.',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[500],
+                  color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color for description
                 ),
               ),
               SizedBox(height: 40),
@@ -39,7 +39,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF1E1E1E), // Background color #1E1E1E
     );
   }
 
@@ -49,14 +49,14 @@ class ForgotPasswordScreen extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'Email',
         filled: true,
-        fillColor: Colors.grey[850],
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        fillColor: Colors.grey[850], // Dark background for input field
+        hintStyle: TextStyle(color: Colors.grey[500]), // Grey hint text
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
       ),
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text color
     );
   }
 
@@ -73,9 +73,14 @@ class ForgotPasswordScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.blue[300], // Button color same as in login screen
         ),
-        child: Text('Send Reset Link'),
+        child: Text(
+          'Send Reset Link',
+          style: TextStyle(
+            color: Color.fromRGBO(255, 250, 250, 1.0), // Button text color (white)
+          ),
+        ),
       ),
     );
   }

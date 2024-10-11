@@ -35,13 +35,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1E1E1E), // Background color #1E1E1E
       body: Row(
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey[300],
+              color: Colors.grey[300], // Light background for the left side
               child: Align(
-                alignment: Alignment.bottomLeft,
+                alignment: Alignment.bottomRight,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Image.asset(
@@ -65,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color
                       ),
                     ),
                     SizedBox(height: 10),
@@ -73,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[500],
+                        color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color
                       ),
                     ),
                     SizedBox(height: 40),
@@ -104,14 +105,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
-        fillColor: Colors.grey[850],
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        fillColor: Colors.grey[850], // Dark background for the input fields
+        hintStyle: TextStyle(color: Colors.grey[500]), // Light grey hint text
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
       ),
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text
     );
   }
 
@@ -121,16 +122,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
-        fillColor: Colors.grey[850],
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        fillColor: Colors.grey[850], // Dark background for input field
+        hintStyle: TextStyle(color: Colors.grey[500]), // Light grey hint text
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: Icon(Icons.visibility, color: Colors.grey[500]),
+        suffixIcon: Icon(Icons.visibility, color: Colors.grey[500]), // Grey icon for password visibility
       ),
       obscureText: true,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text
     );
   }
 
@@ -175,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              backgroundColor: Colors.blue[400],
+              backgroundColor: Colors.blue[300], // Light blue button color
             ),
           ),
         );
@@ -189,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       children: [
         Text(
           "Already have an account? ",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // Light text color for consistency
         ),
         GestureDetector(
           onTap: () {
@@ -198,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Text(
             'Sign in',
             style: TextStyle(
-              color: Colors.blue[300],
+              color: Colors.blue[300], // Light blue color for sign-in link
               fontWeight: FontWeight.bold,
             ),
           ),
