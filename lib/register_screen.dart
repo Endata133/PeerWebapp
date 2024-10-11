@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'social_login_buttons.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,21 +23,21 @@ class LoginScreen extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              padding: EdgeInsets.symmetric(horizontal: 40.0),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Welcome back!',
+                    Text(
+                      'Get started!',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(215, 255, 255, 255),
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Text(
                       'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
                       style: TextStyle(
@@ -46,31 +45,18 @@ class LoginScreen extends StatelessWidget {
                         color: Colors.grey[500],
                       ),
                     ),
-                    const SizedBox(height: 40),
-                    SocialLoginButtons(), // Reusable widget for social login buttons
-                    const SizedBox(height: 30),
+                    SizedBox(height: 40),
+                    _buildTextField('Username'),
+                    SizedBox(height: 20),
                     _buildTextField('Email'),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     _buildPasswordField('Password'),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/forgot-password'); // Navigate to Forgot Password screen
-                        },
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            color: Colors.blue[300],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildLoginButton(),
-                    const SizedBox(height: 20),
-                    _buildSignUpText(context),
+                    SizedBox(height: 20),
+                    _buildPasswordField('Confirm Password'),
+                    SizedBox(height: 30),
+                    _buildRegisterButton(),
+                    SizedBox(height: 20),
+                    _buildSignInText(context),
                   ],
                 ),
               ),
@@ -81,7 +67,6 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // Input Field for Email and Password
   Widget _buildTextField(String hintText) {
     return TextField(
       decoration: InputDecoration(
@@ -94,7 +79,7 @@ class LoginScreen extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
       ),
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.white),
     );
   }
 
@@ -112,18 +97,18 @@ class LoginScreen extends StatelessWidget {
         suffixIcon: Icon(Icons.visibility, color: Colors.grey[500]),
       ),
       obscureText: true,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.white),
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildRegisterButton() {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {},
-        child: const Text('Login'),
+        child: Text('Register'),
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -133,20 +118,20 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSignUpText(BuildContext context) {
+  Widget _buildSignInText(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          "Don't have an account? ",
+        Text(
+          "Already have an account? ",
           style: TextStyle(color: Colors.white),
         ),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/register'); // Navigate to the register screen
+            Navigator.pop(context); // Go back to the login screen
           },
           child: Text(
-            'Sign up',
+            'Sign in',
             style: TextStyle(
               color: Colors.blue[300],
               fontWeight: FontWeight.bold,
