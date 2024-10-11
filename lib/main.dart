@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
 import 'graphql_client.dart';
