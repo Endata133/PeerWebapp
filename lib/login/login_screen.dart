@@ -9,9 +9,14 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1E1E1E),
       body: Row(
         children: [
           Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(70)),
+            
+          
             child: Container(
               color: const Color.fromARGB(255, 255, 255, 255),
               child: Align(
@@ -25,61 +30,74 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
+            ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        child: const Text(
-                          'Welcome back!',
-                          style: TextStyle(
-                            fontSize: 42,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(214, 9, 2, 2),
+            child: Container(
+              
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+                    children: [
+                      const SizedBox(height: 40), // Add some space at the top
+                      Center(
+                        child: Container(
+                          child: const Text(
+                            'Welcome back!',
+                            style: TextStyle(
+                              fontSize: 42,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(255, 250, 250, 1.0),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color.fromARGB(255, 15, 10, 10),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
+                        textAlign: TextAlign.center, // Center this text as well
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color.fromRGBO(255, 250, 250, 1.0),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 40),
-                    SocialLoginButtons(), // Reusable widget for social login buttons
-                    const SizedBox(height: 30),
-                    CustomTextField(hintText: 'Email'), // Moved to login_widgets.dart
-                    const SizedBox(height: 20),
-                    CustomPasswordField(hintText: 'Password'), // Moved to login_widgets.dart
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          handleForgotPassword(context); // Moved to logic
-                        },
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            color: Colors.blue[300],
+                      const SizedBox(height: 40),
+                      // Centering the buttons
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SocialLoginButtons(), // Reusable widget for social login buttons
+                          const SizedBox(height: 30),
+                          CustomTextField(hintText: 'Email'), // Email text field
+                          const SizedBox(height: 20),
+                          CustomPasswordField(hintText: 'Password'), // Password text field
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            handleForgotPassword(context); // Forgot password logic
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: Colors.blue[300],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                    CustomLoginButton(onPressed: handleLogin), // Login logic moved to login_logic.dart
-                    const SizedBox(height: 20),
-                    _buildSignUpText(context),
-                  ],
+                      const SizedBox(height: 30),
+                      CustomLoginButton(onPressed: handleLogin), // Login button
+                      const SizedBox(height: 20),
+                      _buildSignUpText(context),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -95,11 +113,11 @@ class LoginScreen extends StatelessWidget {
       children: [
         const Text(
           "Don't have an account? ",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0),),
         ),
         GestureDetector(
           onTap: () {
-            handleSignUp(context); // Logic moved to login_logic.dart
+            handleSignUp(context); // Sign up logic
           },
           child: Text(
             'Sign up',

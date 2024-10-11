@@ -4,7 +4,7 @@ class SocialLoginButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,  // Centering the buttons horizontally
       children: [
         _buildSocialButton(Icons.android),
         SizedBox(width: 20),
