@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
-              child: Center(
+              child: SingleChildScrollView( // Added to handle vertical overflow
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,

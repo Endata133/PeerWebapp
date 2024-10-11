@@ -68,7 +68,6 @@ class ForgotPasswordScreen extends StatelessWidget {
         onPressed: () {
           // Add password reset functionality
         },
-        child: Text('Send Reset Link'),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -76,6 +75,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           ),
           backgroundColor: Colors.blue[400],
         ),
+        child: Text('Send Reset Link'),
       ),
     );
   }

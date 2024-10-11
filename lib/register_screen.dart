@@ -1,6 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  @override
+  _RegisterScreenState createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final String registerAndVerifyMutation = """
+    mutation RegisterAndVerify(\$username: String!, \$email: String!, \$password: String!, \$userid: String!) {
+      verifiedAccount(userid: \$userid) {
+        status
+        errorMessage
+        accessToken
+        refreshToken
+      }
+      register(input: { email: \$email, password: \$password, username: \$username }) {
+        token
+        user {
+          id
+          email
+        }
+      }
+    }
+  """;
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  final String userid = "fd2a9d00-0fb1-42c2-ba0a-7ebd3f82b2f8"; // Assuming this is a fixed ID
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +45,7 @@ class RegisterScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Image.asset(
-                    'assets/PeerSignet_Color_RGB.png', // Make sure this image path is correct
+                    'assets/PeerSignet_Color_RGB.png',
                     width: 150,
                   ),
                 ),
@@ -46,13 +77,13 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 40),
-                    _buildTextField('Username'),
+                    _buildTextField('Username', _usernameController),
                     SizedBox(height: 20),
-                    _buildTextField('Email'),
+                    _buildTextField('Email', _emailController),
                     SizedBox(height: 20),
-                    _buildPasswordField('Password'),
+                    _buildPasswordField('Password', _passwordController),
                     SizedBox(height: 20),
-                    _buildPasswordField('Confirm Password'),
+                    _buildPasswordField('Confirm Password', _confirmPasswordController),
                     SizedBox(height: 30),
                     _buildRegisterButton(),
                     SizedBox(height: 20),
@@ -67,8 +98,9 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(String hintText) {
+  Widget _buildTextField(String hintText, TextEditingController controller) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
@@ -83,8 +115,9 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPasswordField(String hintText) {
+  Widget _buildPasswordField(String hintText, TextEditingController controller) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
@@ -102,19 +135,51 @@ class RegisterScreen extends StatelessWidget {
   }
 
   Widget _buildRegisterButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {},
-        child: Text('Register'),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: Colors.blue[400],
-        ),
+    return Mutation(
+      options: MutationOptions(
+        document: gql(registerAndVerifyMutation),
+        onCompleted: (dynamic resultData) {
+          if (resultData != null) {
+            print("Registration and Verification successful");
+            print(resultData);
+          }
+        },
+        onError: (OperationException? error) {
+          if (error != null) {
+            print("Error: ${error.toString()}");
+          }
+        },
       ),
+      builder: (RunMutation runMutation, QueryResult? result) {
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              // Check if passwords match
+              if (_passwordController.text != _confirmPasswordController.text) {
+                print("Passwords do not match!");
+                return;
+              }
+
+              // Call the mutation with form values
+              runMutation({
+                'username': _usernameController.text,
+                'email': _emailController.text,
+                'password': _passwordController.text,
+                'userid': userid,
+              });
+            },
+            child: Text('Register'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              backgroundColor: Colors.blue[400],
+            ),
+          ),
+        );
+      },
     );
   }
 
