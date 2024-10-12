@@ -91,7 +91,7 @@ class _GruppenScreenState extends State<GruppenScreen> {
                     onPressed: () => _handleGroupAction(index),
                     child: Text(_groups[index]['isMember'] ? 'Visit' : 'Join'),
                     style: ElevatedButton.styleFrom(
-                      primary: _groups[index]['isMember'] ? Colors.green : Colors.blue,
+                      backgroundColor: _groups[index]['isMember'] ? Colors.green : Colors.blue,
                     ),
                   ),
                 ],

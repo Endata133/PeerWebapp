@@ -74,7 +74,7 @@ class _AdvertiserScreenState extends State<AdvertiserScreen> {
               icon: Icon(Icons.campaign),
               label: Text('Create New Campaign'),
               onPressed: _createNewCampaign,
-              style: ElevatedButton.styleFrom(primary: Colors.blue),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             ),
 
             SizedBox(height: 20),
@@ -163,7 +163,7 @@ class _AdvertiserScreenState extends State<AdvertiserScreen> {
                   },
                   child: Text(campaign['status'] == 'Active' ? 'Pause' : 'Resume'),
                   style: ElevatedButton.styleFrom(
-                    primary: campaign['status'] == 'Active' ? Colors.red : Colors.green,
+                    backgroundColor: campaign['status'] == 'Active' ? Colors.red : Colors.green,
                   ),
                 ),
               ],
@@ -198,16 +198,16 @@ class _AdvertiserScreenState extends State<AdvertiserScreen> {
     );
   }
 
-  // Helper functions to get total metrics
-  int _getTotalClicks() {
-    return _campaigns.fold(0, (sum, campaign) => sum + campaign['clicks']);
-  }
+ // Helper functions to get total metrics
+int _getTotalClicks() {
+  return _campaigns.fold(0, (sum, campaign) => sum + (campaign['clicks'] as int));
+}
 
-  int _getTotalImpressions() {
-    return _campaigns.fold(0, (sum, campaign) => sum + campaign['impressions']);
-  }
+int _getTotalImpressions() {
+  return _campaigns.fold(0, (sum, campaign) => sum + (campaign['impressions'] as int));
+}
 
-  double _getTotalSpend() {
-    return _campaigns.fold(0.0, (sum, campaign) => sum + campaign['spend']);
-  }
+double _getTotalSpend() {
+  return _campaigns.fold(0.0, (sum, campaign) => sum + (campaign['spend'] as double));
+}
 }

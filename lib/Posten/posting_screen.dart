@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // Add this dependency for image picking
 
@@ -197,7 +199,7 @@ class _PostingScreenState extends State<PostingScreen> {
               label: Text('Post'),
               onPressed: _submitPost,
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Button color
+                backgroundColor: Colors.blue, // Button color
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
             ),

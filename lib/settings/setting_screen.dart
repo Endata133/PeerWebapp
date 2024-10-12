@@ -131,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: _logout,
               icon: Icon(Icons.logout),
               label: Text('Logout'),
-              style: ElevatedButton.styleFrom(primary: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             ),
           ],
         ),

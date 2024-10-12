@@ -12,13 +12,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   graphql_flutter: ^5.0.0
   flutter_dotenv: ^5.0.2
+  image_picker: ^0.8.4+4  # Moved inside the dependencies section
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-image_picker: ^0.8.4+4
-
 
 flutter:
   uses-material-design: true
@@ -26,7 +25,7 @@ flutter:
     - assets/PeerSignet_Color_RGB.png
     - assets/pamela.png
     - assets/profile_picture.png
-    ##pngs müssen noch in asset ordner gepackt werden
+    ## pngs müssen noch in asset ordner gepackt werden
     - assets/john_doe.png
     - assets/jane_smith.png
     - assets/alice_brown.png
