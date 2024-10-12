@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'login_logic.dart'; // Importing logic file
 import 'login_widgets.dart'; // Importing reusable widgets
 import 'social_login_buttons.dart';
+import '../newsfeed/newsfeed_screen.dart'; // Import the newsfeed screen
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -15,26 +16,23 @@ class LoginScreen extends StatelessWidget {
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(70)),
-            
-          
-            child: Container(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(1.0),
-                  child: Image.asset(
-                    'assets/PeerSignet_Color_RGB.png', // Make sure this image path is correct
-                    width: 150,
+              child: Container(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Image.asset(
+                      'assets/PeerSignet_Color_RGB.png', // Make sure this image path is correct
+                      width: 150,
+                    ),
                   ),
                 ),
               ),
             ),
-            ),
           ),
           Expanded(
             child: Container(
-              
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: SingleChildScrollView(
@@ -42,7 +40,7 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
                     children: [
-                      const SizedBox(height: 40), // Add some space at the top
+                      const SizedBox(height: 200), // Add some space at the top
                       Center(
                         child: Container(
                           child: const Text(
@@ -72,8 +70,10 @@ class LoginScreen extends StatelessWidget {
                         children: [
                           SocialLoginButtons(), // Reusable widget for social login buttons
                           const SizedBox(height: 30),
+
                           CustomTextField(hintText: 'Email'), // Email text field
                           const SizedBox(height: 20),
+                          
                           CustomPasswordField(hintText: 'Password'), // Password text field
                         ],
                       ),
@@ -87,13 +87,24 @@ class LoginScreen extends StatelessWidget {
                           child: Text(
                             'Forgot Password?',
                             style: TextStyle(
-                              color: Colors.blue[300],
+                              color: Color.fromRGBO(255, 250, 250, 1.0),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 30),
-                      CustomLoginButton(onPressed: handleLogin), // Login button
+                      CustomLoginButton(
+                        onPressed: () {
+                          handleLogin(context); // Login logic
+                          // Navigate to Newsfeed
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NewsFeedScreen(), // Replace this with your newsfeed screen widget
+                            ),
+                          );
+                        },
+                      ),
                       const SizedBox(height: 20),
                       _buildSignUpText(context),
                     ],
@@ -113,7 +124,7 @@ class LoginScreen extends StatelessWidget {
       children: [
         const Text(
           "Don't have an account? ",
-          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0),),
+          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
         ),
         GestureDetector(
           onTap: () {
@@ -122,7 +133,7 @@ class LoginScreen extends StatelessWidget {
           child: Text(
             'Sign up',
             style: TextStyle(
-              color: Colors.blue[300],
+              color: const Color.fromRGBO(168, 233, 255, 1),
               fontWeight: FontWeight.bold,
             ),
           ),

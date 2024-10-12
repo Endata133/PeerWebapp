@@ -30,6 +30,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  bool _passwordVisible = false; // Track password visibility
+  bool _confirmPasswordVisible = false; // Track confirm password visibility
+
   final String userid = "fd2a9d00-0fb1-42c2-ba0a-7ebd3f82b2f8"; // Assuming this is a fixed ID
 
   @override
@@ -39,15 +42,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Row(
         children: [
           Expanded(
-            child: Container(
-              color: Colors.grey[300], // Light background for the left side
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Image.asset(
-                    'assets/PeerSignet_Color_RGB.png',
-                    width: 150,
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(70)),
+              child: Container(
+                color: Colors.grey[300], // Light background for the left side
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.asset(
+                      'assets/PeerSignet_Color_RGB.png',
+                      width: 150,
+                    ),
                   ),
                 ),
               ),
@@ -82,9 +88,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 20),
                     _buildTextField('Email', _emailController),
                     SizedBox(height: 20),
-                    _buildPasswordField('Password', _passwordController),
+                    _buildPasswordField('Password', _passwordController, _passwordVisible, (value) {
+                      setState(() {
+                        _passwordVisible = value;
+                      });
+                    }),
                     SizedBox(height: 20),
-                    _buildPasswordField('Confirm Password', _confirmPasswordController),
+                    _buildPasswordField('Confirm Password', _confirmPasswordController, _confirmPasswordVisible, (value) {
+                      setState(() {
+                        _confirmPasswordVisible = value;
+                      });
+                    }),
                     SizedBox(height: 30),
                     _buildRegisterButton(),
                     SizedBox(height: 20),
@@ -116,9 +130,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildPasswordField(String hintText, TextEditingController controller) {
+  Widget _buildPasswordField(String hintText, TextEditingController controller, bool visible, Function(bool) onVisibilityChanged) {
     return TextField(
       controller: controller,
+      obscureText: !visible, // Use the visibility state to toggle
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
@@ -128,9 +143,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: Icon(Icons.visibility, color: Colors.grey[500]), // Grey icon for password visibility
+        suffixIcon: IconButton(
+          icon: Icon(
+            visible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey[500],
+          ),
+          onPressed: () => onVisibilityChanged(!visible), // Toggle visibility
+        ),
       ),
-      obscureText: true,
       style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text
     );
   }
@@ -147,7 +167,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         onError: (OperationException? error) {
           if (error != null) {
-            print("Error: ${error.toString()}");
+            // Display an error message in the UI if the mutation fails
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Registration failed: ${error.toString()}"),
+            ));
           }
         },
       ),
@@ -156,9 +179,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              // Check if passwords match
+              // Basic validation before calling the mutation
               if (_passwordController.text != _confirmPasswordController.text) {
-                print("Passwords do not match!");
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Passwords do not match!"),
+                ));
+                return;
+              }
+
+              if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Please enter a valid email address"),
+                ));
                 return;
               }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Handles login button press
-void handleLogin() {
+void handleLogin(BuildContext context) {
   // Implement your login logic here
   print('Login button pressed');
 }
