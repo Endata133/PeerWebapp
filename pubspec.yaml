@@ -10,9 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  graphql_flutter: ^5.0.0
+  graphql_flutter: ^5.2.0-beta.7
   flutter_dotenv: ^5.0.2
   image_picker: ^0.8.4+4  # Moved inside the dependencies section
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:

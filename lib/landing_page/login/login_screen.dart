@@ -4,8 +4,60 @@ import 'login_widgets.dart'; // Importing reusable widgets
 import 'social_login_buttons.dart';
 import '../../newsfeed/newsfeed_screen.dart'; // Import the newsfeed screen
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  // Handles login button press
+  Future<void> _handleLogin(BuildContext context) async {
+    setState(() {
+      _isLoading = true; // Show loading indicator while logging in
+    });
+
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar(context, 'Please enter both email and password');
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final loginLogic = LoginLogic();
+    bool success = await loginLogic.handleLogin(email, password);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      // Navigate to Newsfeed on successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NewsFeedScreen()),
+      );
+    } else {
+      _showSnackBar(context, 'Login failed. Please check your credentials.');
+    }
+  }
+
+  // Helper function to show snackbars
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +75,7 @@ class LoginScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
                     child: Image.asset(
-                      'assets/PeerSignet_Color_RGB.png', // Make sure this image path is correct
+                      'assets/PeerSignet_Color_RGB.png', // Ensure this image path is correct
                       width: 150,
                     ),
                   ),
@@ -40,41 +92,40 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
                     children: [
-                      const SizedBox(height: 200), // Add some space at the top
-                      Center(
-                        child: Container(
-                          child: const Text(
-                            'Welcome back!',
-                            style: TextStyle(
-                              fontSize: 42,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromRGBO(255, 250, 250, 1.0),
-                            ),
-                          ),
+                      const SizedBox(height: 200), // Add space at the top
+                      const Text(
+                        'Welcome back!',
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(255, 250, 250, 1.0),
                         ),
                       ),
                       const SizedBox(height: 10),
                       const Text(
                         'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
-                        textAlign: TextAlign.center, // Center this text as well
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
                           color: Color.fromRGBO(255, 250, 250, 1.0),
                         ),
                       ),
                       const SizedBox(height: 40),
-                      // Centering the buttons
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SocialLoginButtons(), // Reusable widget for social login buttons
+                          SocialLoginButtons(), // Social login buttons
                           const SizedBox(height: 30),
-
-                          CustomTextField(hintText: 'Email'), // Email text field
+                          CustomTextField(
+                            hintText: 'Email',
+                            controller: _emailController, // Email controller
+                          ),
                           const SizedBox(height: 20),
-                          
-                          CustomPasswordField(hintText: 'Password'), // Password text field
+                          CustomPasswordField(
+                            hintText: 'Password',
+                            controller: _passwordController, // Password controller
+                          ),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -93,18 +144,13 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      CustomLoginButton(
-                        onPressed: () {
-                          handleLogin(context); // Login logic
-                          // Navigate to Newsfeed
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewsFeedScreen(), // Replace this with your newsfeed screen widget
+                      _isLoading
+                          ? CircularProgressIndicator() // Show loading indicator when logging in
+                          : CustomLoginButton(
+                              onPressed: () {
+                                _handleLogin(context); // Login logic
+                              },
                             ),
-                          );
-                        },
-                      ),
                       const SizedBox(height: 20),
                       _buildSignUpText(context),
                     ],
@@ -128,17 +174,24 @@ class LoginScreen extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            handleSignUp(context); // Sign up logic
+            handleSignUp(context); // Sign-up logic
           },
-          child: Text(
+          child: const Text(
             'Sign up',
             style: TextStyle(
-              color: const Color.fromRGBO(168, 233, 255, 1),
+              color: Color.fromRGBO(168, 233, 255, 1),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 
-// Custom Text Field Widget
+// Custom Text Field Widget with Controller
 class CustomTextField extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller; // Added controller for managing input
 
-  const CustomTextField({required this.hintText, super.key});
+  const CustomTextField({
+    required this.hintText,
+    required this.controller, // Required controller parameter
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller, // Use the controller to handle text input
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
@@ -24,17 +30,30 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
-// Custom Password Field Widget
-class CustomPasswordField extends StatelessWidget {
+// Custom Password Field Widget with Controller
+class CustomPasswordField extends StatefulWidget {
   final String hintText;
+  final TextEditingController controller; // Added controller for managing password input
 
-  const CustomPasswordField({required this.hintText, super.key});
+  const CustomPasswordField({
+    required this.hintText,
+    required this.controller, // Required controller parameter
+    super.key,
+  });
+
+  @override
+  _CustomPasswordFieldState createState() => _CustomPasswordFieldState();
+}
+
+class _CustomPasswordFieldState extends State<CustomPasswordField> {
+  bool _obscureText = true; // Track if the text is obscured
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.controller, // Use the controller to manage password input
       decoration: InputDecoration(
-        hintText: hintText,
+        hintText: widget.hintText,
         filled: true,
         fillColor: Colors.grey[850],
         hintStyle: TextStyle(color: Colors.grey[500]),
@@ -42,9 +61,19 @@ class CustomPasswordField extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: Icon(Icons.visibility, color: Colors.grey[500]),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey[500],
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText; // Toggle visibility of password
+            });
+          },
+        ),
       ),
-      obscureText: true,
+      obscureText: _obscureText, // Obscure text based on the state
       style: const TextStyle(color: Colors.white),
     );
   }
