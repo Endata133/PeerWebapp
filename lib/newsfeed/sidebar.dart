@@ -21,7 +21,7 @@ class Sidebar extends StatelessWidget {
           children: [
             DrawerHeader(
               child: Text(
-                'App Name',
+                'Peer Network',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               decoration: BoxDecoration(

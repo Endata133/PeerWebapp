@@ -7,20 +7,23 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final String registerAndVerifyMutation = """
-    mutation RegisterAndVerify(\$username: String!, \$email: String!, \$password: String!, \$userid: String!) {
+  final String registerMutation = """
+    mutation Register(\$username: String!, \$email: String!, \$password: String!) {
+      register(input: { email: \$email, password: \$password, username: \$username }) {
+        errorMessage
+        userid
+        status
+      }
+    }
+  """;
+
+  final String verifyMutation = """
+    mutation VerifiedAccount(\$userid: String!) {
       verifiedAccount(userid: \$userid) {
         status
         errorMessage
         accessToken
         refreshToken
-      }
-      register(input: { email: \$email, password: \$password, username: \$username }) {
-        token
-        user {
-          id
-          email
-        }
       }
     }
   """;
@@ -30,22 +33,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
-  bool _passwordVisible = false; // Track password visibility
-  bool _confirmPasswordVisible = false; // Track confirm password visibility
-
-  final String userid = "fd2a9d00-0fb1-42c2-ba0a-7ebd3f82b2f8"; // Assuming this is a fixed ID
+  bool _passwordVisible = false;
+  bool _confirmPasswordVisible = false;
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E), // Background color #1E1E1E
+      backgroundColor: const Color(0xFF1E1E1E),
       body: Row(
         children: [
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(70)),
               child: Container(
-                color: Colors.grey[300], // Light background for the left side
+                color: Colors.grey[300],
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
@@ -72,15 +75,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color
+                        color: Color.fromRGBO(255, 250, 250, 1.0),
                       ),
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!',
+                      'Almost like any social media, share content you love and earn on the side – no fame needed!',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color.fromRGBO(255, 250, 250, 1.0), // Light text color
+                        color: Color.fromRGBO(255, 250, 250, 1.0),
                       ),
                     ),
                     SizedBox(height: 40),
@@ -102,6 +105,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: 30),
                     _buildRegisterButton(),
                     SizedBox(height: 20),
+                    if (_errorMessage != null)
+                      Text(
+                        _errorMessage!,
+                        style: TextStyle(color: Colors.red, fontSize: 14),
+                      ),
+                    SizedBox(height: 20),
                     _buildSignInText(context),
                   ],
                 ),
@@ -119,26 +128,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
-        fillColor: Colors.grey[850], // Dark background for the input fields
-        hintStyle: TextStyle(color: Colors.grey[500]), // Light grey hint text
+        fillColor: Colors.grey[850],
+        hintStyle: TextStyle(color: Colors.grey[500]),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
       ),
-      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text
+      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
     );
   }
 
   Widget _buildPasswordField(String hintText, TextEditingController controller, bool visible, Function(bool) onVisibilityChanged) {
     return TextField(
       controller: controller,
-      obscureText: !visible, // Use the visibility state to toggle
+      obscureText: !visible,
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
-        fillColor: Colors.grey[850], // Dark background for input field
-        hintStyle: TextStyle(color: Colors.grey[500]), // Light grey hint text
+        fillColor: Colors.grey[850],
+        hintStyle: TextStyle(color: Colors.grey[500]),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
@@ -148,30 +157,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
             visible ? Icons.visibility : Icons.visibility_off,
             color: Colors.grey[500],
           ),
-          onPressed: () => onVisibilityChanged(!visible), // Toggle visibility
+          onPressed: () => onVisibilityChanged(!visible),
         ),
       ),
-      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // White input text
+      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
     );
   }
 
   Widget _buildRegisterButton() {
     return Mutation(
       options: MutationOptions(
-        document: gql(registerAndVerifyMutation),
+        document: gql(registerMutation),
         onCompleted: (dynamic resultData) {
-          if (resultData != null) {
-            print("Registration and Verification successful");
-            print(resultData);
+          if (resultData != null && resultData['register']['status'] == 'SUCCESS') {
+            _verifyAccount(resultData['register']['userid']);
+          } else {
+            setState(() {
+              _errorMessage = resultData['register']['errorMessage'] ?? 'Registration failed';
+            });
           }
         },
         onError: (OperationException? error) {
-          if (error != null) {
-            // Display an error message in the UI if the mutation fails
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Registration failed: ${error.toString()}"),
-            ));
-          }
+          setState(() {
+            _errorMessage = error?.graphqlErrors.isNotEmpty == true
+                ? error?.graphqlErrors.first.message
+                : 'An unknown error occurred';
+          });
         },
       ),
       builder: (RunMutation runMutation, QueryResult? result) {
@@ -179,41 +190,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              // Basic validation before calling the mutation
               if (_passwordController.text != _confirmPasswordController.text) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Passwords do not match!"),
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Passwords do not match!")),
+                );
                 return;
               }
 
               if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Please enter a valid email address"),
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Please enter a valid email address")),
+                );
                 return;
               }
 
-              // Call the mutation with form values
+              setState(() {
+                _isSubmitting = true;
+              });
+
               runMutation({
                 'username': _usernameController.text,
                 'email': _emailController.text,
                 'password': _passwordController.text,
-                'userid': userid,
               });
             },
-            child: Text('Register'),
+            child: _isSubmitting ? CircularProgressIndicator(color: Colors.white) : Text('Register'),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              backgroundColor: Colors.blue[300], // Light blue button color
+              backgroundColor: Colors.blue[300],
             ),
           ),
         );
       },
     );
+  }
+
+  void _verifyAccount(String userid) {
+    final MutationOptions options = MutationOptions(
+      document: gql(verifyMutation),
+      variables: {
+        'userid': userid,
+      },
+      onCompleted: (dynamic resultData) {
+        if (resultData != null && resultData['verifiedAccount']['status'] == 'SUCCESS') {
+          // Handle successful account verification
+          print('Account verified successfully');
+        } else {
+          setState(() {
+            _errorMessage = resultData['verifiedAccount']['errorMessage'] ?? 'Verification failed';
+          });
+        }
+      },
+      onError: (OperationException? error) {
+        setState(() {
+          _errorMessage = error?.graphqlErrors.isNotEmpty == true
+              ? error?.graphqlErrors.first.message
+              : 'Verification failed';
+        });
+      },
+    );
+
+    GraphQLProvider.of(context).value.mutate(options);
   }
 
   Widget _buildSignInText(BuildContext context) {
@@ -222,16 +262,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       children: [
         Text(
           "Already have an account? ",
-          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)), // Light text color for consistency
+          style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
         ),
         GestureDetector(
           onTap: () {
-            Navigator.pop(context); // Go back to the login screen
+            Navigator.pop(context);
           },
           child: Text(
             'Sign in',
             style: TextStyle(
-              color: Colors.blue[300], // Light blue color for sign-in link
+              color: Colors.blue[300],
               fontWeight: FontWeight.bold,
             ),
           ),
