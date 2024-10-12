@@ -17,9 +17,25 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+image_picker: ^0.8.4+4
+
 
 flutter:
   uses-material-design: true
   assets:
     - assets/PeerSignet_Color_RGB.png
     - assets/pamela.png
+    - assets/profile_picture.png
+    ##pngs müssen noch in asset ordner gepackt werden
+    - assets/john_doe.png
+    - assets/jane_smith.png
+    - assets/alice_brown.png
+    - assets/flutter_group.png
+    - assets/music_group.png
+    - assets/travel_group.png
+    - assets/headphones.png
+    - assets/smart_watch.png
+    - assets/speaker.png
+    - assets/shoes.png
+    - assets/smartphone.png
+    - assets/laptop.png

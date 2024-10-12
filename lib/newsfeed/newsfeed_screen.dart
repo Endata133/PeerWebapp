@@ -13,29 +13,28 @@ class NewsFeedScreen extends StatelessWidget {
           // Sidebar for Navigation (Left)
           Expanded(
             flex: 2,
-            child: Sidebar(), // Use the Sidebar component
+            child: Sidebar(), // Use the Sidebar component with icons restored
           ),
 
           // Newsfeed Content (Center)
           Expanded(
             flex: 6,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  PostCard(
-                    userName: 'Pamela Jones',
-                    postTime: '23. September',
-                    postTitle: 'Hier steht der Titel des Posts (max 1 Zeile)',
-                    postContent:
-                        'Hier steht der beschreibungstext der maximal soooooo lang sein sollte, dass er maaaaximal drei Zeilen füllt.',
-                    postImageUrl: 'https://example.com/invalid-url.jpg', // Invalid URL
-                    likes: 1273,
-                    views: 2526,
-                    comments: 67,
-                  ),
-                  // Add more PostCards as needed
-                ],
-              ),
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                // Repeat the same post card infinitely
+                return PostCard(
+                  userName: 'Pamela Jones',
+                  postTime: '23. September',
+                  postTitle: 'Hier steht der Titel des Posts (max 1 Zeile)',
+                  postContent:
+                      'Hier steht der beschreibungstext der maximal soooooo lang sein sollte, dass er maaaaximal drei Zeilen füllt.',
+                  postImageUrl: 'https://example.com/invalid-url.jpg', // Invalid URL for testing error handling
+                  likes: 1273,
+                  views: 2526,
+                  comments: 67,
+                );
+              },
+              itemCount: null, // Infinite items
             ),
           ),
 
@@ -185,3 +184,4 @@ class PostCard extends StatelessWidget {
     );
   }
 }
+

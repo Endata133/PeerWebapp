@@ -11,56 +11,72 @@ class Sidebar extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: () {
-              // Handle Home Tap
+              // Navigate to Home screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.play_circle_outline_sharp),
+            title: Text('Posten'),
+            onTap: () {
+              // Navigate to Posting screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PostingScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () {
-              // Handle Profile Tap
+              // Navigate to Profile screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.chat),
             title: Text('Chats'),
             onTap: () {
-              // Handle Chats Tap
+              // Navigate to Chats screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.group),
             title: Text('Gruppen'),
             onTap: () {
-              // Handle Gruppen Tap
+              // Navigate to Gruppen screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => GruppenScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.account_balance_wallet),
             title: Text('Wallet'),
             onTap: () {
-              // Handle Wallet Tap
+              // Navigate to Wallet screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.shopping_cart),
             title: Text('Shop'),
             onTap: () {
-              // Handle Shop Tap
+              // Navigate to Shop screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ShopScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.campaign),
             title: Text('Advertiser'),
             onTap: () {
-              // Handle Advertiser Tap
+              // Navigate to Advertiser screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AdvertiserScreen()));
             },
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () {
-              // Handle Settings Tap
+              // Navigate to Settings screen
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen()));
             },
           ),
         ],

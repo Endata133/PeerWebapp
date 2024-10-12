@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'login_logic.dart'; // Importing logic file
 import 'login_widgets.dart'; // Importing reusable widgets
 import 'social_login_buttons.dart';
-import '../newsfeed/newsfeed_screen.dart'; // Import the newsfeed screen
+import '../../newsfeed/newsfeed_screen.dart'; // Import the newsfeed screen
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'login/login_screen.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
-import 'graphql_client.dart';
+import 'landing_page/login/login_screen.dart';
+import 'landing_page/register_screen.dart';
+import 'landing_page/forgot_password_screen.dart';
+import 'landing_page/graphql_client.dart';
 
 void main() async {
   // Initialize Hive for Flutter (required by graphql_flutter for caching)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../login/login_screen.dart'; // Import your login screen
+import '../landing_page/login/login_screen.dart'; // Import your login screen
 
 class NewsFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
