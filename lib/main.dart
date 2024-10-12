@@ -18,7 +18,7 @@ class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
-      client: ValueNotifier(GraphQLConfig.clientToQuery()),
+      client: ValueNotifier(GraphQLConfig.clientToQuery() as GraphQLClient),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginScreen(), // Initial screen is the LoginScreen

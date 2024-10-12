@@ -1,5 +1,8 @@
+// register_screen.dart
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'text_field.dart';
+import 'password_field.dart';
+import 'register_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -17,17 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   """;
 
-  final String verifyMutation = """
-    mutation VerifiedAccount(\$userid: String!) {
-      verifiedAccount(userid: \$userid) {
-        status
-        errorMessage
-        accessToken
-        refreshToken
-      }
-    }
-  """;
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -37,6 +29,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _confirmPasswordVisible = false;
   bool _isSubmitting = false;
   String? _errorMessage;
+
+  void _onRegisterSuccess(String userid) {
+    // Handle successful registration (e.g., navigate to verification)
+    print('Registered successfully with userid: $userid');
+  }
+
+  void _onRegisterFailure(String error) {
+    setState(() {
+      _errorMessage = error;
+      _isSubmitting = false; // Stop submitting on failure
+    });
+  }
+
+  void _onSubmit(bool submitting) {
+    setState(() {
+      _isSubmitting = submitting;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,23 +97,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     SizedBox(height: 40),
-                    _buildTextField('Username', _usernameController),
+                    CustomTextField(hintText: 'Username', controller: _usernameController),
                     SizedBox(height: 20),
-                    _buildTextField('Email', _emailController),
+                    CustomTextField(hintText: 'Email', controller: _emailController),
                     SizedBox(height: 20),
-                    _buildPasswordField('Password', _passwordController, _passwordVisible, (value) {
-                      setState(() {
-                        _passwordVisible = value;
-                      });
-                    }),
+                    CustomPasswordField(
+                      hintText: 'Password',
+                      controller: _passwordController,
+                      isVisible: _passwordVisible,
+                      onVisibilityChanged: (value) {
+                        setState(() {
+                          _passwordVisible = value;
+                        });
+                      },
+                    ),
                     SizedBox(height: 20),
-                    _buildPasswordField('Confirm Password', _confirmPasswordController, _confirmPasswordVisible, (value) {
-                      setState(() {
-                        _confirmPasswordVisible = value;
-                      });
-                    }),
+                    CustomPasswordField(
+                      hintText: 'Confirm Password',
+                      controller: _confirmPasswordController,
+                      isVisible: _confirmPasswordVisible,
+                      onVisibilityChanged: (value) {
+                        setState(() {
+                          _confirmPasswordVisible = value;
+                        });
+                      },
+                    ),
                     SizedBox(height: 30),
-                    _buildRegisterButton(),
+                    RegisterButton(
+                      registerMutation: registerMutation,
+                      usernameController: _usernameController,
+                      emailController: _emailController,
+                      passwordController: _passwordController,
+                      confirmPasswordController: _confirmPasswordController,
+                      isSubmitting: _isSubmitting,
+                      onSubmit: _onSubmit,
+                      onRegisterSuccess: _onRegisterSuccess,
+                      onRegisterFailure: _onRegisterFailure,
+                    ),
                     SizedBox(height: 20),
                     if (_errorMessage != null)
                       Text(
@@ -120,140 +150,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildTextField(String hintText, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        filled: true,
-        fillColor: Colors.grey[850],
-        hintStyle: TextStyle(color: Colors.grey[500]),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
-        ),
-      ),
-      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
-    );
-  }
-
-  Widget _buildPasswordField(String hintText, TextEditingController controller, bool visible, Function(bool) onVisibilityChanged) {
-    return TextField(
-      controller: controller,
-      obscureText: !visible,
-      decoration: InputDecoration(
-        hintText: hintText,
-        filled: true,
-        fillColor: Colors.grey[850],
-        hintStyle: TextStyle(color: Colors.grey[500]),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            visible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.grey[500],
-          ),
-          onPressed: () => onVisibilityChanged(!visible),
-        ),
-      ),
-      style: TextStyle(color: Color.fromRGBO(255, 250, 250, 1.0)),
-    );
-  }
-
-  Widget _buildRegisterButton() {
-    return Mutation(
-      options: MutationOptions(
-        document: gql(registerMutation),
-        onCompleted: (dynamic resultData) {
-          if (resultData != null && resultData['register']['status'] == 'SUCCESS') {
-            _verifyAccount(resultData['register']['userid']);
-          } else {
-            setState(() {
-              _errorMessage = resultData['register']['errorMessage'] ?? 'Registration failed';
-            });
-          }
-        },
-        onError: (OperationException? error) {
-          setState(() {
-            _errorMessage = error?.graphqlErrors.isNotEmpty == true
-                ? error?.graphqlErrors.first.message
-                : 'An unknown error occurred';
-          });
-        },
-      ),
-      builder: (RunMutation runMutation, QueryResult? result) {
-        return SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              if (_passwordController.text != _confirmPasswordController.text) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Passwords do not match!")),
-                );
-                return;
-              }
-
-              if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please enter a valid email address")),
-                );
-                return;
-              }
-
-              setState(() {
-                _isSubmitting = true;
-              });
-
-              runMutation({
-                'username': _usernameController.text,
-                'email': _emailController.text,
-                'password': _passwordController.text,
-              });
-            },
-            child: _isSubmitting ? CircularProgressIndicator(color: Colors.white) : Text('Register'),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              backgroundColor: Colors.blue[300],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _verifyAccount(String userid) {
-    final MutationOptions options = MutationOptions(
-      document: gql(verifyMutation),
-      variables: {
-        'userid': userid,
-      },
-      onCompleted: (dynamic resultData) {
-        if (resultData != null && resultData['verifiedAccount']['status'] == 'SUCCESS') {
-          // Handle successful account verification
-          print('Account verified successfully');
-        } else {
-          setState(() {
-            _errorMessage = resultData['verifiedAccount']['errorMessage'] ?? 'Verification failed';
-          });
-        }
-      },
-      onError: (OperationException? error) {
-        setState(() {
-          _errorMessage = error?.graphqlErrors.isNotEmpty == true
-              ? error?.graphqlErrors.first.message
-              : 'Verification failed';
-        });
-      },
-    );
-
-    GraphQLProvider.of(context).value.mutate(options);
   }
 
   Widget _buildSignInText(BuildContext context) {
