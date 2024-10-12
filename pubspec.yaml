@@ -22,3 +22,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/PeerSignet_Color_RGB.png
+    - assets/pamela.png

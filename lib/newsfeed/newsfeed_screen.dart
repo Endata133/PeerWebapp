@@ -1,60 +1,19 @@
 import 'package:flutter/material.dart';
+import 'newsfeed_appbar.dart'; // Import the AppBar component
+import 'sidebar.dart'; // Import the Sidebar component
+import 'post_card.dart'; // Import the PostCard component
 
 class NewsFeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Newsfeed'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Handle notifications
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () {
-              // Handle profile
-            },
-          ),
-        ],
-      ),
+      appBar: NewsFeedAppBar(), // Use the AppBar component
       body: Row(
         children: [
-          // Optional Sidebar for Navigation (Left)
+          // Sidebar for Navigation (Left)
           Expanded(
             flex: 2,
-            child: Container(
-              color: Colors.grey[200],
-              child: ListView(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.home),
-                    title: Text('Home'),
-                    onTap: () {
-                      // Handle Home Tap
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text('Profile'),
-                    onTap: () {
-                      // Handle Profile Tap
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                    onTap: () {
-                      // Handle Settings Tap
-                    },
-                  ),
-                  // Add more navigation options as needed
-                ],
-              ),
-            ),
+            child: Sidebar(), // Use the Sidebar component
           ),
 
           // Newsfeed Content (Center)
@@ -63,19 +22,18 @@ class NewsFeedScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildPostCard(
-                    context,
+                  PostCard(
                     userName: 'Pamela Jones',
                     postTime: '23. September',
                     postTitle: 'Hier steht der Titel des Posts (max 1 Zeile)',
                     postContent:
-                        'hier steht der beschreibungstext der maximal soooooo lang sein sollte, dass er maaaaximal drei Zeilen füllt.',
-                    postImageUrl: 'https://example.com/image1.jpg',
+                        'Hier steht der beschreibungstext der maximal soooooo lang sein sollte, dass er maaaaximal drei Zeilen füllt.',
+                    postImageUrl: 'https://example.com/invalid-url.jpg', // Invalid URL
                     likes: 1273,
                     views: 2526,
                     comments: 67,
                   ),
-                  // Add more posts as needed
+                  // Add more PostCards as needed
                 ],
               ),
             ),
@@ -106,7 +64,6 @@ class NewsFeedScreen extends StatelessWidget {
                     color: Colors.greenAccent,
                     child: Center(child: Text('Ad 2')),
                   ),
-                  // Add more widgets for additional content
                 ],
               ),
             ),
@@ -115,17 +72,31 @@ class NewsFeedScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  // Helper function to build a post card
-  Widget _buildPostCard(BuildContext context,
-      {required String userName,
-      required String postTime,
-      required String postTitle,
-      required String postContent,
-      required String postImageUrl,
-      required int likes,
-      required int views,
-      required int comments}) {
+class PostCard extends StatelessWidget {
+  final String userName;
+  final String postTime;
+  final String postTitle;
+  final String postContent;
+  final String postImageUrl;
+  final int likes;
+  final int views;
+  final int comments;
+
+  PostCard({
+    required this.userName,
+    required this.postTime,
+    required this.postTitle,
+    required this.postContent,
+    required this.postImageUrl,
+    required this.likes,
+    required this.views,
+    required this.comments,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(16.0),
       child: Padding(
@@ -133,15 +104,14 @@ class NewsFeedScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile and unfollow button at the top
+            // Post Header (User info)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://example.com/user_avatar.jpg'), // Use correct user avatar URL
+                      backgroundImage: AssetImage('assets/pamela.png'), // Use an asset image for the avatar
                     ),
                     SizedBox(width: 10),
                     Column(
@@ -157,35 +127,28 @@ class NewsFeedScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    // Handle unfollow logic
-                  },
-                  child: Text(
-                    'unfollow',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
               ],
             ),
             SizedBox(height: 10),
 
-            // Post image
+            // Post Image with error handling
             Image.network(
               postImageUrl,
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/pamela.png', // Fallback image
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
             SizedBox(height: 10),
 
-            // Post title and content
+            // Post Title and Content
             Text(
               postTitle,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -194,7 +157,7 @@ class NewsFeedScreen extends StatelessWidget {
             Text(postContent),
             SizedBox(height: 10),
 
-            // Post actions (like, view, comment) and date
+            // Post Actions (like, view, comment)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
