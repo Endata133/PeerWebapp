@@ -7,19 +7,19 @@ Future<void> handleLogin(BuildContext context, String email, String password) as
   try {
     // Call your GraphQL or API logic for verifying and logging in
     final client = await getGraphQLClient();
-    const String verifiedAccountMutation = """
-      mutation VerifiedAccount(\$email: String!, \$password: String!) {
-        verifiedAccount {
-          errorMessage
-        }
+    const String loginMutation = """
+      mutation Login(\$email: String!, \$password: String!) {
         login(email: \$email, password: \$password) {
+          errorMessage
+          accessToken
+          refreshToken
           status
         }
       }
     """;
 
     final MutationOptions options = MutationOptions(
-      document: gql(verifiedAccountMutation),
+      document: gql(loginMutation),
       variables: {
         'email': email,
         'password': password,
@@ -32,12 +32,12 @@ Future<void> handleLogin(BuildContext context, String email, String password) as
       throw Exception(result.exception.toString());
     }
 
-    // Check if there was an error message for verification
-    final String? errorMessage = result.data?['verifiedAccount']['errorMessage'];
+    // Check for error message and login status
+    final String? errorMessage = result.data?['login']['errorMessage'];
     final String status = result.data?['login']['status'];
 
     if (errorMessage != null && errorMessage.isNotEmpty) {
-      // Display error message if account verification failed
+      // Display error message if login failed
       throw Exception(errorMessage);
     }
 
@@ -74,7 +74,7 @@ class LoginLogic {
     const String loginMutation = """
       mutation Login(\$email: String!, \$password: String!) {
         login(email: \$email, password: \$password) {
-          token
+          accessToken
         }
       }
     """;
@@ -95,9 +95,9 @@ class LoginLogic {
     }
 
     // If login is successful, retrieve the token
-    final String? token = result.data?['login']['token'];
-    if (token != null) {
-      print('Login successful, token: $token');
+    final String? accessToken = result.data?['login']['accessToken'];
+    if (accessToken != null) {
+      print('Login successful, token: $accessToken');
       // Store the token securely using flutter_secure_storage if needed
       return true;
     }
