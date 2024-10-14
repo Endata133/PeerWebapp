@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/newsfeed/post_service.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'newsfeed_appbar.dart'; // Import the AppBar component
 import 'sidebar.dart'; // Import the Sidebar component
 import 'post_card.dart'; // Import the PostCard component
 
-class NewsFeedScreen extends StatelessWidget {
+class NewsFeedScreen extends StatefulWidget {
+  const NewsFeedScreen({super.key});
+
+  @override
+  _NewsFeedScreenState createState() => _NewsFeedScreenState();
+}
+
+class _NewsFeedScreenState extends State<NewsFeedScreen> {
+  PostService postService = PostService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,22 +30,43 @@ class NewsFeedScreen extends StatelessWidget {
           // Newsfeed Content (Center)
           Expanded(
             flex: 6,
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                // Repeat the same post card infinitely
-                return PostCard(
-                  userName: 'Pamela Jones',
-                  postTime: '23. September',
-                  postTitle: 'Hier steht der Titel des Posts (max 1 Zeile)',
-                  postContent:
-                      'Hier steht der beschreibungstext der maximal soooooo lang sein sollte, dass er maaaaximal drei Zeilen füllt.',
-                  postImageUrl: 'https://example.com/invalid-url.jpg', // Invalid URL for testing error handling
-                  likes: 1273,
-                  views: 2526,
-                  comments: 67,
+            child: FutureBuilder<QueryResult<Object?>>(
+              future: postService.fetchAllPosts(),
+              builder: (BuildContext context, AsyncSnapshot<QueryResult<Object?>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error loading posts'));
+                }
+
+                // Check if snapshot has data and if the 'data' field is not null
+                if (!snapshot.hasData || snapshot.data?.data == null) {
+                  return Center(child: Text('No posts available'));
+                  
+                }
+
+                // Assuming the data is available in the 'getallposts' key
+                final posts = snapshot.data!.data?['getallposts'];
+
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index];
+                    return PostCard(
+                      userName: post['user']['username'],
+                      postTime: post['createdat'],
+                      postTitle: post['title'],
+                      postContent: post['mediadescription'] ?? '',
+                      postImageUrl: post['media'] ?? '',
+                      likes: post['amountlikes'] ?? 0,
+                      views: post['amountviews'] ?? 0,
+                      comments: post['amountcomments'] ?? 0,
+                    );
+                  },
                 );
               },
-              itemCount: null, // Infinite items
             ),
           ),
 
@@ -45,8 +77,8 @@ class NewsFeedScreen extends StatelessWidget {
               color: Colors.grey[300],
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: Text(
                       'Sponsored Ads',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -55,13 +87,13 @@ class NewsFeedScreen extends StatelessWidget {
                   Container(
                     height: 100,
                     color: Colors.blueAccent,
-                    child: Center(child: Text('Ad 1')),
+                    child: const Center(child: Text('Ad 1')),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     height: 100,
                     color: Colors.greenAccent,
-                    child: Center(child: Text('Ad 2')),
+                    child: const Center(child: Text('Ad 2')),
                   ),
                 ],
               ),
@@ -83,7 +115,8 @@ class PostCard extends StatelessWidget {
   final int views;
   final int comments;
 
-  PostCard({
+  const PostCard({
+    super.key, 
     required this.userName,
     required this.postTime,
     required this.postTitle,
@@ -97,7 +130,7 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(16.0),
+      margin: const EdgeInsets.all(16.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -109,16 +142,16 @@ class PostCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       backgroundImage: AssetImage('assets/pamela.png'), // Use an asset image for the avatar
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           userName,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         Text(postTime),
@@ -128,7 +161,7 @@ class PostCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Post Image with error handling
             Image.network(
@@ -145,16 +178,16 @@ class PostCard extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Post Title and Content
             Text(
               postTitle,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(postContent),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Post Actions (like, view, comment)
             Row(
@@ -162,16 +195,16 @@ class PostCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.favorite_border, color: Colors.blue),
-                    SizedBox(width: 5),
+                    const Icon(Icons.favorite_border, color: Colors.blue),
+                    const SizedBox(width: 5),
                     Text(likes.toString()),
-                    SizedBox(width: 20),
-                    Icon(Icons.visibility, color: Colors.blue),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 20),
+                    const Icon(Icons.visibility, color: Colors.blue),
+                    const SizedBox(width: 5),
                     Text(views.toString()),
-                    SizedBox(width: 20),
-                    Icon(Icons.comment, color: Colors.blue),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 20),
+                    const Icon(Icons.comment, color: Colors.blue),
+                    const SizedBox(width: 5),
                     Text('$comments Comments'),
                   ],
                 ),
@@ -184,4 +217,3 @@ class PostCard extends StatelessWidget {
     );
   }
 }
-

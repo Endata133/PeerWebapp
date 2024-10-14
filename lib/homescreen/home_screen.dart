@@ -43,6 +43,8 @@ class HomeScreen extends StatelessWidget {
       'time': '3 hours ago',
     },
   ];
+
+  HomeScreen({super.key});
   
   BuildContext? get context => null;
 
@@ -50,7 +52,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: const Text('Home'),
         backgroundColor: Colors.blue,
       ),
       body: Padding(
@@ -60,12 +62,12 @@ class HomeScreen extends StatelessWidget {
             // First Row: Notifications
             _buildNotificationsSection(),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Second Row: Quick Actions
             _buildQuickActionsSection(),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Third Row: Recent Activity
             _buildRecentActivitySection(),
@@ -91,7 +93,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Notifications',
                     style: TextStyle(
                       fontSize: 18,
@@ -99,15 +101,15 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.blue,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   for (var notification in _notifications.take(3)) ...[
                     Text(
                       notification,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    Divider(),
+                    const Divider(),
                   ],
-                  Text(
+                  const Text(
                     'See all notifications...',
                     style: TextStyle(
                       color: Colors.blue,
@@ -145,10 +147,10 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 action['label'],
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
             ],
           ),
@@ -173,7 +175,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Recent Activity',
                     style: TextStyle(
                       fontSize: 18,
@@ -181,19 +183,19 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   for (var activity in _recentActivity.take(3)) ...[
                     Text(
                       activity['title']!,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
                       activity['time']!,
-                      style: TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.grey),
                     ),
-                    Divider(),
+                    const Divider(),
                   ],
-                  Text(
+                  const Text(
                     'View all recent activity...',
                     style: TextStyle(
                       color: Colors.blue,
